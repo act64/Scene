@@ -1,0 +1,3 @@
+include ':app'
+include ':base_module'
+project(':base_module').projectDir= new File(settingsDir, '../../HotJavi/base_module')
