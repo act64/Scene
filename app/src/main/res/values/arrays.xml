@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="uints">
+        <item >个</item>
+        <item >斤</item>
+        <item >公斤</item>
+        <item >升</item>
+    </string-array>
+</resources>

@@ -76,7 +76,7 @@ public class PhotoSelectedThumbnailActivity extends BaseSetMainActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setMainContet(R.layout.social_activity_photo_selected_thumbnail);
-
+		getCustomToolBar().setTitle("拍照或选择相片");
 		selectedImages = new ArrayList<String>();
 		maxImageSelectCount = getIntent().getIntExtra("maxImageSelectCount", 1);
 		gridView = (GridView) findViewById(R.id.gridView);

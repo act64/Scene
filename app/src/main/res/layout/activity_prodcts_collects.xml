@@ -1,14 +1,156 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activity.ProductsCollectActivity">
-<Button
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:layout_marginLeft="10dp"
+    >
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="商户"
+        android:textColor="@color/text.333333"
+        android:textSize="18dp"
+        android:layout_centerVertical="true"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="王小毛"
+        android:textSize="18dp"
+        android:layout_marginLeft="55dp"
+        android:layout_centerVertical="true"
+        android:textColor="#88333333"
+        />
+</RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="10dp"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="品名"
+            android:textColor="@color/text.333333"
+            android:textSize="18dp"
+            android:layout_centerVertical="true"
+            />
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minWidth="100dp"
+            android:hint="输入例如鸡蛋"
+            android:layout_marginLeft="50dp"
+            android:textSize="18dp"
+            android:layout_centerVertical="true"
+            android:textColor="@color/text.333333"
+            />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="10dp"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="数量"
+            android:textColor="@color/text.333333"
+            android:textSize="18dp"
+            android:layout_centerVertical="true"
+            />
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minWidth="100dp"
+            android:inputType="numberDecimal"
+            android:hint="输入例如10"
+            android:layout_marginLeft="50dp"
+            android:textSize="18dp"
+            android:layout_centerVertical="true"
+            android:textColor="@color/text.333333"
+            />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="10dp"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="单位"
+            android:textColor="@color/text.333333"
+            android:textSize="18dp"
+            android:layout_centerVertical="true"
+            />
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minWidth="100dp"
+            android:layout_marginLeft="50dp"
+            android:textSize="18dp"
+            android:layout_centerVertical="true"
+            android:textColor="@color/text.333333"
+            android:entries="@array/uints"
+            />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="10dp"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="地址"
+            android:textColor="@color/text.333333"
+            android:textSize="18dp"
+            android:layout_centerVertical="true"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:minWidth="100dp"
+            android:layout_marginLeft="50dp"
+            android:textSize="18dp"
+            android:text="正在定位中"
+            android:gravity="center|left"
+            android:layout_centerVertical="true"
+            android:textColor="@color/text.333333"
+            android:id="@+id/tv_location"
+            />
+    </RelativeLayout>
+    <Button
     android:layout_width="match_parent"
     android:layout_height="50dp"
     android:text="测试相册"
-    android:onClick="gotophotos"
+    android:id="@+id/tv_click_takePhoto"
     />
-</LinearLayout>
+    <com.recovery.scene.widget.MyGridView
+        android:id="@+id/gridView"
+        android:layout_below="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:numColumns="3"
+
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="1dp"
+        android:layout_centerInParent="true"
+        android:verticalSpacing="10dp"
+        android:horizontalSpacing="10dp"
+        android:padding="10dp"
+        android:stretchMode="columnWidth"
+        android:background="@color/white"
+        android:scrollbars="none">
+    </com.recovery.scene.widget.MyGridView>
+</LinearLayout></ScrollView>

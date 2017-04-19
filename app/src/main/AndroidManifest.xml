@@ -37,6 +37,9 @@
         android:supportsRtl="true"
         android:name=".application.BaseApplication"
         android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="M2TgTLDFg9XoiIQbxOVuiAtq0fVLuo3Y" />
         <activity
             android:name=".activity.MainActivity"
             android:screenOrientation="portrait">
@@ -54,7 +57,15 @@
         <activity
             android:name=".activity.PhotoSelectedThumbnailActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".activity.PhotoDeleteSliderActivity"
+            android:screenOrientation="portrait"/>
+        <!--百度定位-->
+        <service
+            android:name="com.baidu.location.f"
+            android:enabled="true"
+            android:process=":remote">
 
+        </service>
     </application>
 
 </manifest>

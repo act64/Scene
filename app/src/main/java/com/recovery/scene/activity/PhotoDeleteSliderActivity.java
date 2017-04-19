@@ -1,69 +1,75 @@
 package com.recovery.scene.activity;
 
-import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.recovery.scene.R;
+import com.recovery.scene.application.BaseApplication;
+import com.recovery.scene.widget.ConfirmTipsDialog;
 import com.recovery.scene.widget.RecyclingPagerAdapter;
 
+import java.io.Serializable;
 import java.util.List;
 
 import hotjavi.lei.com.base_module.activity.BaseSetMainActivity;
 import it.sephiroth.android.library.imagezoom.ImageViewTouch;
 import it.sephiroth.android.library.imagezoom.ImageViewTouchBase;
 
-import static com.recovery.scene.application.BaseApplication.context;
-
 /**
- *  本地所有图片大图查看
+ *  本地图片大图删除
  */
-public class PhotoSelectedSliderActivity extends BaseSetMainActivity {
-	/**
-	 * 定义全局变量ViewPager
-	 */
-	private ViewPager mViewPager;
+public class PhotoDeleteSliderActivity extends BaseSetMainActivity {
+    /**
+     * 定义全局变量ViewPager
+     */
+    private ViewPager mViewPager;
 
     private ImagePagerLocalAdapter imagePagerAdapter;
 
     private List<String> imageList;
 
-    private int maxImageSelectCount;
-
-    private final List<String> selectedImages = PhotoSelectedThumbnailActivity.selectedImages;
-
-    private CheckBox checkBox;
-
     int index = 0;
 
     private TextView indexView;
 
-    private CheckBoxListener checkBoxListener;
+    @Override
+    public void finish(){
+        Intent intent = new Intent();
+        intent.putExtra("imageList", (Serializable) imageList);
+        setResult(1, intent);
+        super.finish();
+    }
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setMainContet(R.layout.social_activity_photo_selected_slider);
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setMainContet(R.layout.social_activity_photo_selected_slider);
+        findViewById(R.id.select).setVisibility(View.GONE);
         imageList = (List<String>) getIntent().getSerializableExtra("imageList");
 
         index = getIntent().getIntExtra("index", 0);
-
-        maxImageSelectCount = getIntent().getIntExtra("maxImageSelectCount", 1);
 
         indexView = (TextView) findViewById(R.id.tv_title);
 
@@ -77,27 +83,40 @@ public class PhotoSelectedSliderActivity extends BaseSetMainActivity {
          */
         mViewPager.setOnPageChangeListener(new MyPagerChangeListener());
 
-        checkBox = (CheckBox) findViewById(R.id.select);
-        checkBoxListener = new CheckBoxListener();
-        checkBox.setOnCheckedChangeListener(checkBoxListener);
-
-        String text = selectedImages.size() <= 0 ? "完成" : ("完成(" + selectedImages.size() + "/" + maxImageSelectCount + ")");
-       getCustomToolBar().setRightText(text);
+        getCustomToolBar().setRightIcon(R.drawable.social_delete);
         getCustomToolBar().setRightClick(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                ConfirmTipsDialog dialog = new ConfirmTipsDialog(PhotoDeleteSliderActivity.this, "确定删除本张图片吗？", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(imageList.size() <= 1) {
+                            imageList.remove(0);
+                            finish();
+                            return;
+                        }
+//                        if (index == 0){
+//                            mViewPager.setCurrentItem(1);
+//                        } else{
+//                            mViewPager.setCurrentItem(index-1);
+//                        }
+                        imageList.remove(index);
+                        imagePagerAdapter.notifyDataSetChanged();
+                        indexView.setText((index+1) + "/" + imageList.size());
+                    }
+                });
+                dialog.show();
             }
-        });;
-        indexView.setText(index + "/" + imageList.size());
+        });
+        indexView.setText((index+1) + "/" + imageList.size());
 
-		/**
-		 * 填充ViewPager的数据适配器
-		 */
-        imagePagerAdapter = new ImagePagerLocalAdapter(this, imageList);
-		mViewPager.setAdapter(imagePagerAdapter);
+        /**
+         * 填充ViewPager的数据适配器
+         */
+        imagePagerAdapter = new ImagePagerLocalAdapter(imageList);
+        mViewPager.setAdapter(imagePagerAdapter);
         mViewPager.setCurrentItem(index);
-	}
+    }
 
     /**
      * ImagePagerLocalAdapter
@@ -105,7 +124,7 @@ public class PhotoSelectedSliderActivity extends BaseSetMainActivity {
      */
     public class ImagePagerLocalAdapter extends RecyclingPagerAdapter implements View.OnClickListener {
 
-        private Activity mActivity;
+//        private Activity mActivity;
         private List<String> imageList;
 
         private ImageLoader imageLoader = ImageLoader.getInstance();
@@ -127,8 +146,8 @@ public class PhotoSelectedSliderActivity extends BaseSetMainActivity {
             this.imageList = imageList;
         }
 
-        public ImagePagerLocalAdapter(Activity activity, List<String> imageList) {
-            this.mActivity = activity;
+        public ImagePagerLocalAdapter(List<String> imageList) {
+//            this.mActivity = activity;
             this.imageList = imageList;
         }
 
@@ -141,7 +160,7 @@ public class PhotoSelectedSliderActivity extends BaseSetMainActivity {
         public View getView(int position, View convertView, ViewGroup container) {
             ViewHolder holder;
             if (convertView == null) {
-                LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                LayoutInflater inflater = (LayoutInflater) BaseApplication.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 convertView = inflater.inflate(R.layout.social_slider_imageview_local,
                         container, false);
                 holder = new ViewHolder();
@@ -158,6 +177,11 @@ public class PhotoSelectedSliderActivity extends BaseSetMainActivity {
         }
 
         @Override
+        public int getItemPosition(Object object) {
+            return POSITION_NONE;
+        }
+
+        @Override
         public void onClick(View v) {
 
         }
@@ -170,60 +194,17 @@ public class PhotoSelectedSliderActivity extends BaseSetMainActivity {
     }
 
     public class MyPagerChangeListener implements OnPageChangeListener {
-		@Override
-		public void onPageScrollStateChanged(int arg0) {}
-		@Override
-		public void onPageScrolled(int arg0, float arg1, int arg2) {}
-
-		@Override
-        public void onPageSelected(int position) {
-            indexView.setText(position + "/" + imageList.size());
-            checkBox.setOnCheckedChangeListener(null);
-            checkBox.setTag(imageList.get(position));
-            if(selectedImages.contains(imageList.get(position)))
-                checkBox.setChecked(true);
-            else
-                checkBox.setChecked(false);
-            checkBox.setOnCheckedChangeListener(checkBoxListener);
-        }
-		
-	}
-
-    class CheckBoxListener implements CompoundButton.OnCheckedChangeListener {
+        @Override
+        public void onPageScrollStateChanged(int arg0) {}
+        @Override
+        public void onPageScrolled(int arg0, float arg1, int arg2) {}
 
         @Override
-        public void onCheckedChanged(CompoundButton buttonView,
-                                     boolean isChecked) {
-            String imagePath = (String) buttonView.getTag();
-            if (isChecked) {
-                if (selectedImages.size() >= maxImageSelectCount) {
-                    Toast toast = Toast
-                            .makeText(PhotoSelectedSliderActivity.this, String
-                                            .format("最多可选 %d 张",
-                                                    maxImageSelectCount),
-                                    Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.CENTER, 0, 0);
-                    toast.show();
-                    buttonView.setChecked(!isChecked);
-                } else {
-                    selectedImages.add(imagePath);
-                    getCustomToolBar().setRightText("完成(" + selectedImages.size() + "/" + maxImageSelectCount + ")");
-                }
-            } else {
-                selectedImages.remove(imagePath);
-                getCustomToolBar().setRightText("完成(" + selectedImages.size() + "/" + maxImageSelectCount + ")");
-            }
+        public void onPageSelected(int position) {
+            index = position;
+            indexView.setText((position+1) + "/" + imageList.size());
         }
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
     }
 
 }
