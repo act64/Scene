@@ -1,11 +1,19 @@
 package com.recovery.scene.activity;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
+import android.nfc.NfcAdapter;
+import android.nfc.Tag;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,6 +60,9 @@ public class ProductsCollectActivity extends BaseSetMainActivity implements View
     public LocationClient mLocationClient = null;
     public BDLocationListener myListener = new MyLocationListener();
     private TextView tvLocation;
+    private NfcAdapter mNfcAdapter;
+    private IntentFilter[] mWriteTagFilters;
+    private PendingIntent mNfcPendingIntent;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,7 +88,117 @@ public class ProductsCollectActivity extends BaseSetMainActivity implements View
         //注册监听函数
         initLocation();
         mLocationClient.start();
+        initNfc();
 
+    }
+
+    private void initNfc(){
+        //获取默认NFC设备
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        if (mNfcAdapter == null) {
+            Toast.makeText(this, "该设备不支持NFC！", Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+
+        //查看NFC是否开启
+        if (!mNfcAdapter.isEnabled()){
+            Toast.makeText(this, "请在系统设置中先启用NFC功能", Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+
+         mNfcPendingIntent = PendingIntent.getActivity(this, 0,
+                new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+        IntentFilter ndefDetected = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
+        try {
+            ndefDetected.addDataType("*/*");
+        } catch (IntentFilter.MalformedMimeTypeException e) {
+            e.printStackTrace();
+        }
+        mWriteTagFilters = new IntentFilter[] { ndefDetected ,new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED),new IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED)};
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mNfcAdapter.enableForegroundDispatch(this, mNfcPendingIntent, mWriteTagFilters, null);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mNfcAdapter.disableForegroundNdefPush(this);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())||NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent.getAction())
+                ||NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())) {
+            NdefMessage[] msgs = getNdefMessages(intent);
+            readNFCId(intent);
+            String body = new String(msgs[0].getRecords()[0].getPayload());
+
+           Log.e ("nfcread","***读取数据***" + body);
+        }
+    }
+
+    private void readNFCId(Intent intent){
+        byte[] bytesId =intent.getByteArrayExtra(NfcAdapter.EXTRA_ID);
+//        Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+//        byte[] dataId = tag.getId();
+//        Log.e("dataId",dataId+"");
+        String strId = bytesToHexString(bytesId);// 字符序列转换为16进制字符串
+        Log.e("nfcID",strId+"");
+    }
+
+    private String bytesToHexString(byte[] src) {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        if (src == null || src.length <= 0) {
+            return null;
+        }
+        char[] buffer = new char[2];
+        for (int i = 0; i < src.length; i++) {
+            buffer[0] = Character.toUpperCase(Character.forDigit(
+                    (src[i] >>> 4) & 0x0F, 16));
+            buffer[1] = Character.toUpperCase(Character.forDigit(src[i] & 0x0F,
+                    16));
+            System.out.println(buffer);
+            stringBuilder.append(buffer);
+        }
+        return stringBuilder.toString();
+    }
+
+    //实际读取数据部分
+    private NdefMessage[] getNdefMessages(Intent intent)
+    {
+        NdefMessage[] msgs = null;
+        String action = intent.getAction();
+        if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action) || NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action))
+        {
+            Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
+            if (rawMsgs != null)
+            {
+                msgs = new NdefMessage[rawMsgs.length];
+                for (int i = 0; i < rawMsgs.length; i++)
+                {
+                    msgs[i] = (NdefMessage) rawMsgs[i];
+                }
+            } else
+            {
+                // Unknown tag type
+                byte[] empty = new byte[] {};
+                NdefRecord record = new NdefRecord(NdefRecord.TNF_UNKNOWN, empty, empty, empty);
+                NdefMessage msg = new NdefMessage(new NdefRecord[] { record });
+                msgs = new NdefMessage[] { msg };
+            }
+        } else
+        {
+            // Log.d(TAG, "Unknown intent.");
+            finish();
+        }
+        return msgs;
     }
 
     private void initLocation() {

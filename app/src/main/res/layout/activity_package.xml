@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/bg_page"
+    >
     <RelativeLayout
         android:layout_width="match_parent"
+        android:background="@color/white"
         android:layout_height="50dp"
-        android:layout_marginLeft="10dp"
+        android:id="@+id/rl_code"
         >
         <TextView
+            android:layout_marginLeft="10dp"
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="打包码"
@@ -15,50 +20,69 @@
             android:textSize="18dp"
             android:layout_centerVertical="true"
             />
-        <com.recovery.scene.widget.ClearEditText
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="78dhfh"
+            android:gravity="right"
             android:textSize="18dp"
             android:layout_marginLeft="70dp"
             android:layout_marginRight="40dp"
             android:layout_centerVertical="true"
             android:textColor="#88333333"
+            android:id="@+id/tv_package_code"
+            />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/enterlist_right"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
             />
     </RelativeLayout>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginLeft="10dp"
+        android:background="@color/white"
+        android:layout_marginTop="1dp"
         >
+
         <TextView
+            android:layout_marginLeft="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:text="数量"
             android:textColor="@color/text.333333"
             android:textSize="18dp"
-            android:layout_centerVertical="true"
-            />
+            android:id="@+id/textView" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="10"
-            android:textSize="18dp"
             android:layout_marginLeft="55dp"
-            android:layout_centerVertical="true"
+            android:text="10"
             android:textColor="#88333333"
-            />
+            android:textSize="18dp"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/textView" />
     </RelativeLayout>
-<TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="产品列表"
-    android:textSize="20dp"
-    android:layout_marginLeft="10dp"
-    />
-    <ListView
-        android:layout_width="match_parent"
+
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="产品列表"
+        android:textSize="20dp"
+        android:textColor="@color/text.333333"
+        android:layout_marginLeft="10dp"
+        />
+    <ListView
+        android:background="@color/white"
         android:id="@+id/lv_package"
-        ></ListView>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></ListView>
+
+
 </LinearLayout>

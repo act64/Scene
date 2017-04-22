@@ -3,8 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-<LinearLayout
+    android:layout_height="wrap_content">
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/bg_page"
+        />
+    <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="50dp"
     android:orientation="horizontal"
@@ -18,21 +23,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:text="编码："
+            tools:text="王小毛"
             android:textColor="@color/text.333333"
             android:textSize="18dp"
-            android:id="@+id/tv_code"
+            android:id="@+id/tv_name"
             />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            tools:text="898778"
-            android:textColor="@color/light_88333333"
-            android:textSize="18dp"
-            android:id="@+id/tv_value_code"
-            android:layout_toRightOf="@+id/tv_code"
-            />
+
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="0dp"
@@ -64,7 +60,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:text="状态："
+                android:text="品名："
                 android:textColor="@color/text.333333"
                 android:textSize="18dp"
                 android:id="@+id/tv_state"
@@ -73,10 +69,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:text="898778"
+                tools:text="898778"
                 android:textColor="@color/light_88333333"
                 android:textSize="18dp"
-                android:id="@+id/tv_value_state"
+                android:id="@+id/tv_value_product"
                 android:layout_toRightOf="@+id/tv_state"
                 />
         </RelativeLayout>
@@ -89,7 +85,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:text="商户："
+                android:text="数量："
                 android:textColor="@color/text.333333"
                 android:textSize="18dp"
                 android:id="@+id/tv_bussinessman"
@@ -101,47 +97,9 @@
                 tools:text="898778"
                 android:textColor="@color/light_88333333"
                 android:textSize="18dp"
-                android:id="@+id/tv_value_bussinessman"
+                android:id="@+id/tv_value_num"
                 android:layout_toRightOf="@+id/tv_bussinessman"
                 />
-        </RelativeLayout>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal"
-        >
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            >
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:text="品名："
-                android:textColor="@color/text.333333"
-                android:textSize="18dp"
-                android:id="@+id/tv_productname"
-                />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                tools:text="898778"
-                android:textColor="@color/light_88333333"
-                android:textSize="18dp"
-                android:id="@+id/tv_value_productname"
-                android:layout_toRightOf="@+id/tv_productname"
-                />
-        </RelativeLayout>
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            >
-
         </RelativeLayout>
     </LinearLayout>
 

@@ -8,4 +8,10 @@
     android:text="相机测试"
     android:onClick="gotoCamera"
     />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="选择页面"
+        android:onClick="gotoSelected"
+        />
 </LinearLayout>
