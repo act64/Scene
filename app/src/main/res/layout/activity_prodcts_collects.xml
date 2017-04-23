@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView android:layout_height="match_parent"
     android:layout_width="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -24,37 +24,40 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="王小毛"
+        tools:text="王小毛"
         android:textSize="18dp"
         android:layout_marginLeft="55dp"
         android:layout_centerVertical="true"
         android:textColor="#88333333"
+        android:id="@+id/tv_vendorname"
         />
 </RelativeLayout>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginLeft="10dp"
-        >
+        android:layout_marginLeft="10dp">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:text="品名"
             android:textColor="@color/text.333333"
-            android:textSize="18dp"
-            android:layout_centerVertical="true"
-            />
-        <EditText
+            android:textSize="18dp" />
+
+        <com.recovery.scene.widget.EditTextMaxThree
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minWidth="100dp"
-            android:hint="输入例如鸡蛋"
-            android:layout_marginLeft="50dp"
-            android:textSize="18dp"
             android:layout_centerVertical="true"
+            android:layout_marginLeft="50dp"
+            android:hint="输入例如鸡蛋"
+            android:minWidth="100dp"
+            android:id="@+id/et_product"
             android:textColor="@color/text.333333"
-            />
+            android:textSize="18dp" />
     </RelativeLayout>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -68,16 +71,18 @@
             android:textSize="18dp"
             android:layout_centerVertical="true"
             />
-        <EditText
+        <com.recovery.scene.widget.EditTextMaxThree
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minWidth="100dp"
-            android:inputType="numberDecimal"
+            android:inputType="number"
+            android:digits="0123456789."
             android:hint="输入例如10"
             android:layout_marginLeft="50dp"
             android:textSize="18dp"
             android:layout_centerVertical="true"
             android:textColor="@color/text.333333"
+            android:id="@+id/et_count"
             />
     </RelativeLayout>
     <RelativeLayout
@@ -102,6 +107,7 @@
             android:layout_centerVertical="true"
             android:textColor="@color/text.333333"
             android:entries="@array/uints"
+            android:id="@+id/spinner_unit"
             />
     </RelativeLayout>
     <RelativeLayout
@@ -130,10 +136,73 @@
             android:id="@+id/tv_location"
             />
     </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="10dp"
+        android:id="@+id/rl_units"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="单元"
+            android:textColor="@color/text.333333"
+            android:textSize="18dp"
+            android:layout_centerVertical="true"
+            />
+        <com.recovery.scene.widget.MultiSelectSpinner
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:minWidth="100dp"
+            android:layout_marginLeft="50dp"
+            android:textSize="18dp"
+            android:text="正在定位中"
+            android:gravity="center|left"
+            android:layout_centerVertical="true"
+            android:textColor="@color/text.333333"
+            android:id="@+id/spiner_listunits"
+            />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="10dp"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="标签"
+            android:textColor="@color/text.333333"
+            android:textSize="18dp"
+            android:layout_centerVertical="true"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:minWidth="100dp"
+            android:layout_marginLeft="50dp"
+            android:textSize="18dp"
+            android:text=""
+            android:gravity="center|right"
+            android:paddingRight="40dp"
+            android:layout_centerVertical="true"
+            android:textColor="@color/text.333333"
+            android:id="@+id/tv_tag_code"
+            />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/enterlist_right"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            />
+    </RelativeLayout>
     <Button
     android:layout_width="match_parent"
     android:layout_height="50dp"
-    android:text="测试相册"
+    android:text="产品图片"
+        android:background="@color/white"
     android:id="@+id/tv_click_takePhoto"
     />
     <com.recovery.scene.widget.MyGridView
@@ -153,4 +222,16 @@
         android:background="@color/white"
         android:scrollbars="none">
     </com.recovery.scene.widget.MyGridView>
+
+    <Button
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:id="@+id/btn_save"
+        android:text="保存"
+        android:layout_marginTop="30dp"
+        android:background="@color/app.blue"
+        android:textColor="@color/white"
+        android:textSize="20dp"
+        android:layout_gravity="center"
+        />
 </LinearLayout></ScrollView>

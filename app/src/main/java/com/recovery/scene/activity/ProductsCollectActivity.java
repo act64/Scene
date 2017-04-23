@@ -1,51 +1,79 @@
 package com.recovery.scene.activity;
 
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.nfc.NdefMessage;
-import android.nfc.NdefRecord;
-import android.nfc.NfcAdapter;
-import android.nfc.Tag;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.text.Editable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
-import com.baidu.location.BDLocationListener;
-import com.baidu.location.LocationClient;
-import com.baidu.location.LocationClientOption;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.recovery.netwrok.apiservice.ApiService;
+import com.recovery.netwrok.model.CollectRecordInfo;
+import com.recovery.netwrok.model.ImageUploadInfo;
+import com.recovery.netwrok.model.SellerInfo;
+import com.recovery.netwrok.model.TagStateInfo;
+import com.recovery.netwrok.model.UnitsInfo;
+import com.recovery.netwrok.subscriber.ApiSubscriber;
 import com.recovery.scene.R;
+import com.recovery.scene.widget.MultiSelectSpinner;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-import hotjavi.lei.com.base_module.activity.BaseSetMainActivity;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import hotjavi.lei.com.base_module.present.BaseObjectPresent;
+import rx.Observable;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by tom on 2017/4/18.
  */
 
-public class ProductsCollectActivity extends BaseSetMainActivity implements View.OnClickListener {
+public class ProductsCollectActivity extends BaseDeviceFuncActivity implements View.OnClickListener {
     private static final int THUMBNAIL_ACTIVITY = 0;
     private static final int DELETE_ACTIVITY = 11;
-    private int maxImageSelectCount = 9;
+    @BindView(R.id.tv_vendorname)
+    TextView tvVendorname;
+    @BindView(R.id.et_product)
+    EditText etProduct;
+    @BindView(R.id.et_count)
+    EditText etCount;
+    @BindView(R.id.spinner_unit)
+    Spinner spinnerUnit;
+    @BindView(R.id.spiner_listunits)
+    MultiSelectSpinner spinerListunits;
+    @BindView(R.id.tv_tag_code)
+    TextView tvTagCode;
+    @BindView(R.id.btn_save)
+    Button btnSave;
+    @BindView(R.id.rl_units)
+    RelativeLayout rlUnits;
+    private int maxImageSelectCount = 6;
     private GridView imageGridView;
     private PublishNewsPicAdapter adapter;
     private ImageLoader imageLoader = ImageLoader.getInstance();
@@ -57,17 +85,23 @@ public class ProductsCollectActivity extends BaseSetMainActivity implements View
             .imageScaleType(ImageScaleType.EXACTLY)//设置图片以如何的编码方式显示
             .bitmapConfig(Bitmap.Config.RGB_565)//设置图片的解码类型//
             .build();//构建完成
-    public LocationClient mLocationClient = null;
-    public BDLocationListener myListener = new MyLocationListener();
     private TextView tvLocation;
-    private NfcAdapter mNfcAdapter;
-    private IntentFilter[] mWriteTagFilters;
-    private PendingIntent mNfcPendingIntent;
+    private Present mPresent = new Present(this);
+    private Subscription sub;
+    private BDLocation bdlocation;
+    private String venid;
+
+    @Override
+    protected void onBdLocationFind(BDLocation bdLocatio) {
+        tvLocation.setText("在" + bdLocatio.getProvince() + bdLocatio.getCity() + bdLocatio.getLocationDescribe().replace("在", ""));
+        bdlocation=bdLocatio;
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setMainContet(R.layout.activity_prodcts_collects);
+        ButterKnife.bind(this);
         getCustomToolBar().setTitle("产品采收");
         getCustomToolBar().setBackVisble(true, new View.OnClickListener() {
             @Override
@@ -81,195 +115,267 @@ public class ProductsCollectActivity extends BaseSetMainActivity implements View
         findViewById(R.id.tv_click_takePhoto).setOnClickListener(adapter.getTakePhotoClickListener());
         tvLocation = (TextView) findViewById(R.id.tv_location);
         tvLocation.setOnClickListener(this);
-
-        mLocationClient = new LocationClient(getApplicationContext());
-        //声明LocationClient类
-        mLocationClient.registerLocationListener(myListener);
-        //注册监听函数
-        initLocation();
-        mLocationClient.start();
-        initNfc();
+        btnSave.setOnClickListener(this);
+        rlUnits.setVisibility(View.GONE);
 
     }
 
-    private void initNfc(){
-        //获取默认NFC设备
-        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        if (mNfcAdapter == null) {
-            Toast.makeText(this, "该设备不支持NFC！", Toast.LENGTH_LONG).show();
-            finish();
-            return;
-        }
-
-        //查看NFC是否开启
-        if (!mNfcAdapter.isEnabled()){
-            Toast.makeText(this, "请在系统设置中先启用NFC功能", Toast.LENGTH_LONG).show();
-            finish();
-            return;
-        }
-
-         mNfcPendingIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-        IntentFilter ndefDetected = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
-        try {
-            ndefDetected.addDataType("*/*");
-        } catch (IntentFilter.MalformedMimeTypeException e) {
-            e.printStackTrace();
-        }
-        mWriteTagFilters = new IntentFilter[] { ndefDetected ,new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED),new IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED)};
+    private void useSellerInfo(SellerInfo sellInfo) {
+        tvVendorname.setText(sellInfo.getName());
+        venid=sellInfo.getId();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mNfcAdapter.enableForegroundDispatch(this, mNfcPendingIntent, mWriteTagFilters, null);
+
+    private void useTagState(TagStateInfo tagStateInfo) {
+
+        tvTagCode.append("  " + tagStateInfo.toString());
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mNfcAdapter.disableForegroundNdefPush(this);
-    }
+    private HashMap<String, String> unitsMap;
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())||NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent.getAction())
-                ||NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())) {
-            NdefMessage[] msgs = getNdefMessages(intent);
-            readNFCId(intent);
-            String body = new String(msgs[0].getRecords()[0].getPayload());
-
-           Log.e ("nfcread","***读取数据***" + body);
-        }
-    }
-
-    private void readNFCId(Intent intent){
-        byte[] bytesId =intent.getByteArrayExtra(NfcAdapter.EXTRA_ID);
-//        Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-//        byte[] dataId = tag.getId();
-//        Log.e("dataId",dataId+"");
-        String strId = bytesToHexString(bytesId);// 字符序列转换为16进制字符串
-        Log.e("nfcID",strId+"");
-    }
-
-    private String bytesToHexString(byte[] src) {
-        StringBuilder stringBuilder = new StringBuilder();
-
-        if (src == null || src.length <= 0) {
-            return null;
-        }
-        char[] buffer = new char[2];
-        for (int i = 0; i < src.length; i++) {
-            buffer[0] = Character.toUpperCase(Character.forDigit(
-                    (src[i] >>> 4) & 0x0F, 16));
-            buffer[1] = Character.toUpperCase(Character.forDigit(src[i] & 0x0F,
-                    16));
-            System.out.println(buffer);
-            stringBuilder.append(buffer);
-        }
-        return stringBuilder.toString();
-    }
-
-    //实际读取数据部分
-    private NdefMessage[] getNdefMessages(Intent intent)
-    {
-        NdefMessage[] msgs = null;
-        String action = intent.getAction();
-        if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action) || NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action))
-        {
-            Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
-            if (rawMsgs != null)
-            {
-                msgs = new NdefMessage[rawMsgs.length];
-                for (int i = 0; i < rawMsgs.length; i++)
-                {
-                    msgs[i] = (NdefMessage) rawMsgs[i];
-                }
-            } else
-            {
-                // Unknown tag type
-                byte[] empty = new byte[] {};
-                NdefRecord record = new NdefRecord(NdefRecord.TNF_UNKNOWN, empty, empty, empty);
-                NdefMessage msg = new NdefMessage(new NdefRecord[] { record });
-                msgs = new NdefMessage[] { msg };
+    private void useUits(UnitsInfo unitsInfo) {
+        unitsMap = new HashMap<>();
+        spinerListunits.setSelection(new ArrayList<String>());
+        if (unitsInfo.getUnits() != null && unitsInfo.getUnits().size() > 0)
+            rlUnits.setVisibility(View.VISIBLE);
+        for (UnitsInfo.UnitsBean unitsBean : unitsInfo.getUnits()) {
+                unitsMap.put(unitsBean.getName(), unitsBean.getId());
             }
-        } else
-        {
-            // Log.d(TAG, "Unknown intent.");
-            finish();
-        }
-        return msgs;
-    }
-
-    private void initLocation() {
-        LocationClientOption option = new LocationClientOption();
-        option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);
-        //可选，默认高精度，设置定位模式，高精度，低功耗，仅设备
-
-        option.setCoorType("bd09ll");
-        //可选，默认gcj02，设置返回的定位结果坐标系
-
-        int span = 1000;
-        option.setScanSpan(span);
-        //可选，默认0，即仅定位一次，设置发起定位请求的间隔需要大于等于1000ms才是有效的
-
-        option.setIsNeedAddress(true);
-        //可选，设置是否需要地址信息，默认不需要
-
-        option.setOpenGps(true);
-        //可选，默认false,设置是否使用gps
-
-        option.setLocationNotify(true);
-        //可选，默认false，设置是否当GPS有效时按照1S/1次频率输出GPS结果
-
-        option.setIsNeedLocationDescribe(true);
-        //可选，默认false，设置是否需要位置语义化结果，可以在BDLocation.getLocationDescribe里得到，结果类似于“在北京天安门附近”
-
-        option.setIsNeedLocationPoiList(true);
-        //可选，默认false，设置是否需要POI结果，可以在BDLocation.getPoiList里得到
-
-        option.setIgnoreKillProcess(false);
-        //可选，默认true，定位SDK内部是一个SERVICE，并放到了独立进程，设置是否在stop的时候杀死这个进程，默认不杀死
-
-        option.SetIgnoreCacheException(false);
-        //可选，默认false，设置是否收集CRASH信息，默认收集
-
-        option.setEnableSimulateGps(false);
-        //可选，默认false，设置是否需要过滤GPS仿真结果，默认需要
-
-        mLocationClient.setLocOption(option);
+        spinerListunits.setItems(new ArrayList<String>(unitsMap.keySet()));
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mLocationClient != null) {
-            mLocationClient.unRegisterLocationListener(myListener);
-            mLocationClient.stop();
+    protected void onNFCIDRead(String str) {
+        if (isLoading()) return;
+        showLoading("查询商户信息中");
+        mPresent.getCard(str);
+        rlUnits.setVisibility(View.GONE);
+
+    }
+
+    @Override
+    protected void onScanCode(String tagCode) {
+        super.onScanCode(tagCode);
+        tvTagCode.setText(tagCode);
+        mPresent.getCodeState(tagCode);
+        showLoading("查询标签信息");
+
+
+    }
+
+    @OnClick(R.id.tv_tag_code)
+    public void onViewClicked() {
+        Toast.makeText(this, "扫描标签二维码替换标签", Toast.LENGTH_SHORT).show();
+    }
+
+
+    private static class Present extends BaseObjectPresent<ProductsCollectActivity> {
+        public Present(ProductsCollectActivity productsCollectActivity) {
+            super(productsCollectActivity);
+
         }
+
+        public void getCard(String card) {
+            ApiService.getSellerInfo(card, null, null).map(new Func1<SellerInfo, SellerInfo>() {
+                @Override
+                public SellerInfo call(SellerInfo sellerInfo) {
+                    getRefObj().hideLoading();
+
+                    if (sellerInfo == null) {
+                        throw new RuntimeException("");
+                    }
+                    getRefObj().useSellerInfo(sellerInfo);
+                    return sellerInfo;
+                }
+            }).observeOn(Schedulers.io())
+                    .flatMap(new Func1<SellerInfo, Observable<UnitsInfo>>() {
+                        @Override
+                        public Observable<UnitsInfo> call(SellerInfo sellerInfo) {
+                            return ApiService.getUnitsInfo(sellerInfo.getId());
+                        }
+                    }).observeOn(AndroidSchedulers.mainThread()).subscribe(new ApiSubscriber<UnitsInfo>() {
+                @Override
+                public void onError(Throwable e) {
+                    super.onError(e);
+                    if (!isAvaiable()) return;
+                    getRefObj().hideLoading();
+                }
+
+                @Override
+                public void onNext(UnitsInfo unitsInfo) {
+                    super.onNext(unitsInfo);
+                    if (!isAvaiable()) return;
+                    getRefObj().hideLoading();
+                    if (unitsInfo != null) {
+                        getRefObj().useUits(unitsInfo);
+                    }
+                }
+            });
+        }
+
+        public void getCodeState(String code) {
+            ApiService.tagqueryState(code).subscribe(new ApiSubscriber<TagStateInfo>() {
+                @Override
+                public void onError(Throwable e) {
+                    super.onError(e);
+                    if (!isAvaiable()) return;
+                    getRefObj().hideLoading();
+                }
+
+                @Override
+                public void onNext(TagStateInfo tagStateInfo) {
+                    super.onNext(tagStateInfo);
+                    if (!isAvaiable()) return;
+                    getRefObj().hideLoading();
+                    if (tagStateInfo != null) {
+                        getRefObj().useTagState(tagStateInfo);
+                    }
+                }
+            });
+        }
+
+        public void saveCollectData(CollectRecordInfo collectRecordInfo){
+            ApiService.savePurchase(collectRecordInfo).subscribe(new ApiSubscriber<Object>(){
+                @Override
+                public void onError(Throwable e) {
+                    super.onError(e);
+                    if (!isAvaiable())return;
+                    getRefObj().hideLoading();
+                }
+
+                @Override
+                public void onNext(Object o) {
+                    super.onNext(o);
+                    if (!isAvaiable())return;
+                    getRefObj().hideLoading();
+                    Toast.makeText(getRefObj(),"保存成功",Toast.LENGTH_SHORT).show();
+                    getRefObj().finish();
+                }
+            });
+        }
+    }
+
+    private boolean checkVaild(){
+        if (TextUtils.isEmpty(tvVendorname.getText())){
+            Toast.makeText(this,"请使用商户刷卡",Toast.LENGTH_SHORT).show();
+            return false;
+
+        }
+        if (!tvTagCode.getText().toString().contains("未使用")){
+            Toast.makeText(this,"请选取未使用的标签",Toast.LENGTH_SHORT).show();
+            return false;
+
+
+        }
+        if (TextUtils.isEmpty(etProduct.getText())){
+            Toast.makeText(this,"请输入品名",Toast.LENGTH_SHORT).show();
+            return false;
+
+
+        }
+        Editable etCountText = etCount.getText();
+        if (TextUtils.isEmpty(etCountText)){
+            Toast.makeText(this,"请输入数量",Toast.LENGTH_SHORT).show();
+            return false;
+
+        }
+           if (!etCountText.toString().matches("[1-9]\\d*(\\.\\d+)?")) {
+               Toast.makeText(this, "数量必须为有效的整数或者小数，不能以0开头", Toast.LENGTH_SHORT).show();
+               return false;
+           }
+        return true;
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_location: {
-                mLocationClient.registerLocationListener(myListener);
-                mLocationClient.start();
+                startLocation();
+                break;
+
+            }
+            case R.id.btn_save: {
+               if (!checkVaild()) return;
+                if (adapter==null ||adapter.getPicList()==null||adapter.getPicList().size()==0){
+                    Toast.makeText(this,"没有选择图片",Toast.LENGTH_SHORT).show();
+                }
+
+                showLoading("上传图片中");
+                picAll=0;
+                for (int i = 0; i < adapter.getPicList().size(); i++) {
+                    if (adapter.getPicList().get(i)!=null){
+                        picAll++;
+                    }
+                }
+                uploaded=0;
+                uploadImgs=new ArrayList<>();
+
+               Observable.from(adapter.getPicList())
+                       .observeOn(Schedulers.io()).filter(new Func1<String, Boolean>() {
+                   @Override
+                   public Boolean call(String s) {
+                       return !TextUtils.isEmpty(s);
+                   }
+               }) .observeOn(Schedulers.io())
+                       .flatMap(new Func1<String, Observable<ImageUploadInfo>>() {
+                   @Override
+                   public Observable<ImageUploadInfo> call(String s) {
+                       return ApiService.uploadFile(new File(s));
+                   }
+               }).observeOn(AndroidSchedulers.mainThread()).subscribe(new ApiSubscriber<ImageUploadInfo>() {
+                   @Override
+                   public void onError(Throwable e) {
+                       super.onError(e);
+                       hideLoading();
+                       Toast.makeText(ProductsCollectActivity.this,"上传图片失败，请重试",Toast.LENGTH_SHORT).show();
+                   }
+
+                   @Override
+                   public void onNext(ImageUploadInfo imageUploadInfo) {
+                       super.onNext(imageUploadInfo);
+                       uploaded++;
+                       uploadImgs.add(imageUploadInfo.getImage());
+                       if (uploaded==picAll){
+                           if (!checkVaild())return;
+                           hideLoading();
+                           CollectRecordInfo collectRecordInfo=new CollectRecordInfo();
+                           collectRecordInfo.setImages(uploadImgs);
+                           if (bdlocation!=null) {
+                               collectRecordInfo.setLatitude(bdlocation.getLatitude()+"");
+                               collectRecordInfo.setLongitude(bdlocation.getLongitude()+"");
+
+                           }
+                           if (!tvLocation.getText().toString().contains("定位中")){
+                               collectRecordInfo.setPosition(tvLocation.getText().toString());
+                           }
+                           collectRecordInfo.setPosition("");
+                           collectRecordInfo.setTagId(tvTagCode.getText().toString().split(" ")[0]);
+                           collectRecordInfo.setUnit((String) spinnerUnit.getSelectedItem());
+                           if (unitsMap!=null &&spinerListunits!=null){
+                               ArrayList<String> selectIds=new ArrayList<String>();
+                               for (int i = 0; i < spinerListunits.getSelectedStrings().size(); i++) {
+                                   selectIds.add(unitsMap.get(spinerListunits.getSelectedStrings().get(i)));
+                               }
+                               collectRecordInfo.setUnitIds(selectIds);
+                           }
+                           collectRecordInfo.setProduct(etProduct.getText().toString());
+
+                           String s = etCount.getText().toString();
+                           collectRecordInfo.setQuantity( Double.parseDouble(s));
+                           collectRecordInfo.setVendorId(venid);
+                           mPresent.saveCollectData(collectRecordInfo);
+                       }
+                   }
+               });
                 break;
             }
         }
     }
 
-    public class MyLocationListener implements BDLocationListener {
-        @Override
-        public void onReceiveLocation(BDLocation bdLocation) {
-            if (!TextUtils.isEmpty(bdLocation.getLocationDescribe())) {
-                tvLocation.setText(bdLocation.getLocationDescribe());
-                mLocationClient.unRegisterLocationListener(myListener);
-                mLocationClient.stop();
-            }
-        }
-    }
+
+    int picAll ;
+    int uploaded;
+    ArrayList<String> uploadImgs;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

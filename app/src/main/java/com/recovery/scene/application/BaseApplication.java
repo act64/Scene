@@ -3,6 +3,7 @@ package com.recovery.scene.application;
 import android.app.Application;
 import android.content.Context;
 
+import com.blankj.utilcode.util.Utils;
 import com.recovery.scene.utils.ImageLoadManager;
 
 /**
@@ -16,6 +17,7 @@ public class BaseApplication extends Application{
         super.onCreate();
         context=this;
         ImageLoadManager.init();
+        Utils.init(this);
 
     }
 }

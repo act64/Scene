@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_page"
-    >
+    android:background="@color/bg_page">
     <LinearLayout
         android:layout_marginTop="40dp"
         android:layout_width="match_parent"
@@ -68,13 +69,21 @@
             android:layout_margin="10dp"
             />
     </LinearLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text=""
+        android:textSize="20dp"
         android:textColor="@color/text.333333"
         android:gravity="center"
         android:id="@+id/tv_currentTime"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="15dp"
+        android:layout_marginRight="15dp"
+        tools:text="您好，老王\n2017-11-11 11:11:11"
         />
-
+    </RelativeLayout>
 </LinearLayout>

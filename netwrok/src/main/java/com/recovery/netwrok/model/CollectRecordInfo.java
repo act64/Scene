@@ -29,6 +29,15 @@ public class CollectRecordInfo {
     private String tagId;
     private List<String> unitIds;
     private List<String> images;
+    private Double quantity;
+
+    public Double getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Double quantity) {
+        this.quantity = quantity;
+    }
 
     public String getVendorId() {
         return vendorId;

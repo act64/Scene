@@ -1,8 +1,12 @@
 package com.recovery.netwrok.apiservice;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Log;
 
+import com.blankj.utilcode.util.ImageUtils;
+import com.blankj.utilcode.util.Utils;
 import com.recovery.netwrok.model.CollectRecordInfo;
 import com.recovery.netwrok.model.ImageUploadInfo;
 import com.recovery.netwrok.model.PackCreateResultInfo;
@@ -17,6 +21,8 @@ import com.recovery.netwrok.model.UserInfo;
 import com.recovery.netwrok.util.RetrofitUtil;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,21 +47,40 @@ public class ApiService {
 
 
 
-    public static Observable<ImageUploadInfo> uploadFile(Uri fileUri) {
+    public static Observable<ImageUploadInfo> uploadFile(File file) {
         // create upload service client
+        BitmapFactory.Options options2 = new BitmapFactory.Options();
+        options2.inPreferredConfig = Bitmap.Config.RGB_565;
 
+        File f=new File(file.getParentFile().getAbsolutePath()+"/"+file.hashCode() +"compress");
+        try {
+            if (!f.exists()) {
+                Bitmap bm = BitmapFactory.decodeFile(file.getAbsolutePath(), options2);
+
+                FileOutputStream fos = new FileOutputStream(f);
+                if (file.getName().toLowerCase().contains("png")) {
+                    bm.compress(Bitmap.CompressFormat.PNG, 30, fos);
+                } else {
+                    bm.compress(Bitmap.CompressFormat.JPEG, 30, fos);
+
+                }
+             bm.recycle();
+            }
+        } catch (FileNotFoundException e) {
+           Log.e("compress error",Log.getStackTraceString(e));
+
+        }
 
         // https://github.com/iPaulPro/aFileChooser/blob/master/aFileChooser/src/com/ipaulpro/afilechooser/utils/FileUtils.java
         // use the FileUtils to get the actual file by uri
-        File file=null ;
 
         // create RequestBody instance from file
         RequestBody requestFile =
-                RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                RequestBody.create(MediaType.parse("multipart/form-data"), f);
 
         // MultipartBody.Part is used to send also the actual file name
         MultipartBody.Part body =
-                MultipartBody.Part.createFormData("file", "file", requestFile);
+                MultipartBody.Part.createFormData("file", file.getName(), requestFile);
 
         // add another part within the multipart request
         String descriptionString = "hello, this is description speaking";
@@ -63,7 +88,6 @@ public class ApiService {
                 RequestBody.create(
                         MediaType.parse("multipart/form-data"), descriptionString);
        return RetrofitUtil.handleApiCall( iAPiService.imageUpload(description,body));
-
 
     }
 
@@ -95,8 +119,12 @@ public class ApiService {
      * @param nfcId
      * @return
      */
-    public static Observable<SellerInfo> getSellerInfo(String nfcId){
-       return RetrofitUtil.handleApiCall(iAPiService.nfcQuerySellerInfo(nfcId));
+    public static Observable<SellerInfo> getSellerInfo(String nfcId,Double lantitude,Double longitude){
+        HashMap<String,String> map=new HashMap<>();
+        map.put("lantitude",lantitude==null?"":lantitude+"");
+        map.put("longitude",lantitude==null?"":longitude+"");
+
+        return RetrofitUtil.handleApiCall(iAPiService.nfcQuerySellerInfo(nfcId,map));
     }
 
     /**
@@ -111,6 +139,7 @@ public class ApiService {
      */
     public static Observable<TagStateInfo> tagqueryState(String tagid){
         return RetrofitUtil.handleApiCall(iAPiService.tagCodeQueryState(tagid));
+
     }
 
     /**
@@ -123,7 +152,7 @@ public class ApiService {
     public static Observable<Object> savePurchase(CollectRecordInfo collectRecordInfo){
         ResponseResult<CollectRecordInfo> recordInfoResponseResult=new ResponseResult<>();
         recordInfoResponseResult.setData(collectRecordInfo);
-        return RetrofitUtil.handleApiCall(iAPiService.savePurchase(recordInfoResponseResult));
+        return RetrofitUtil.handleApiCall(iAPiService.savePurchase(collectRecordInfo));
     }
 
     /**
@@ -176,11 +205,12 @@ public class ApiService {
      vendor：商户名
      * @return
      */
-    public static Observable<PurchaseInfo> purchaseHistory(Long startTime,Long endTime,String vendor){
+    public static Observable<PurchaseInfo> purchaseHistory(Long startTime,Long endTime,String vendor,int page){
         HashMap<String,Object> hashMap=new HashMap<>();
         hashMap.put("startTime",startTime);
         hashMap.put("endTime",endTime);
         hashMap.put("vendor",vendor);
+        hashMap.put("page",page);
         return RetrofitUtil.handleApiCall(iAPiService.purchaseHistory(hashMap));
     }
 
@@ -193,7 +223,7 @@ public class ApiService {
          * @return
          */
         @GET("vendor/{id}")
-        Observable<ResponseResult<SellerInfo>> nfcQuerySellerInfo(@Path("id")String id);
+        Observable<ResponseResult<SellerInfo>> nfcQuerySellerInfo(@Path("id")String id,@QueryMap Map<String,String> queryMap);
 
         @GET("barcode/{id}/state")
         Observable<ResponseResult<TagStateInfo>> tagCodeQueryState(@Path("id")String id);
@@ -204,12 +234,12 @@ public class ApiService {
                                                                 @Part MultipartBody.Part file);
 
         @POST("purchase/create")
-        Observable<ResponseResult<Object>> savePurchase(@Body ResponseResult<CollectRecordInfo> collectRecordInfoResponseResult);
+        Observable<ResponseResult<Object>> savePurchase(@Body CollectRecordInfo collectRecordInfoResponseResult);
 
         @GET("vendor/{vendorId}/units")
         Observable<ResponseResult<UnitsInfo>>getUnitInfo(@Path("vendorId")String vendorId);
 
-        @GET("tag/{id}")
+        @GET("barcode/{id}/info")
         Observable<ResponseResult<TagInfo>>getTagInfo(@Path("id")String TagId);
 
         @POST("package/create")

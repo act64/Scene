@@ -2,10 +2,18 @@ package com.recovery.netwrok.util;
 
 import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.Utils;
+import com.recovery.netwrok.commoninfo.UserInfoUtil;
 import com.recovery.netwrok.exception.NetException;
 import com.recovery.netwrok.model.ResponseResult;
+import com.recovery.netwrok.model.UserInfo;
 
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import okhttp3.internal.Util;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -20,14 +28,29 @@ import rx.schedulers.Schedulers;
  */
 
 public class RetrofitUtil {
-    private static final String baseUtl="";
+    private static final String baseUtl="http://192.168.0.19:8648/";
+    private static final long DEFAULT_TIMEOUT = 20;
     private static Retrofit retrofit;
 
     public static Retrofit get(){
         if (retrofit==null){
             synchronized (RetrofitUtil.class){
                 if (retrofit==null){
-                    OkHttpClient okHttpClient=new OkHttpClient();
+                    OkHttpClient okHttpClient=new OkHttpClient.Builder().addInterceptor(new Interceptor() {
+                        @Override
+                        public Response intercept(Chain chain) throws IOException {
+                            Request.Builder builder = chain.request()
+                                    .newBuilder();
+                           if (UserInfoUtil.getUserInfo()!=null){
+                               builder.addHeader("Current-User",UserInfoUtil.getUserInfo().getId());
+                           }
+                            Request request = builder
+                                    .build();
+                            return chain.proceed(request);
+                        }
+                    }) .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
+                            .writeTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
+                            .readTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS).build();
                    retrofit= new Retrofit.Builder().baseUrl(baseUtl)
                             .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                             .addConverterFactory(GsonConverterFactory.create())

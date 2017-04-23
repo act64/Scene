@@ -6,7 +6,7 @@ package com.recovery.netwrok.exception;
 
 public class NetException extends RuntimeException {
     public static final int NoNetWork=-2001;
-    public static final int NetWorkOk=2000;
+    public static final int NetWorkOk=0;
     private int code;
     public NetException(int errorcode,String msg){
         super(msg);

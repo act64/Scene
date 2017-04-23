@@ -23,7 +23,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="78dhfh"
+            android:text="请输入打包码"
             android:gravity="right"
             android:textSize="18dp"
             android:layout_marginLeft="70dp"
@@ -63,9 +63,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="55dp"
-            android:text="10"
+            android:text="0"
             android:textColor="#88333333"
             android:textSize="18dp"
+            android:id="@+id/tv_counts"
             android:layout_centerVertical="true"
             android:layout_toEndOf="@+id/textView" />
     </RelativeLayout>
@@ -78,11 +79,31 @@
         android:textColor="@color/text.333333"
         android:layout_marginLeft="10dp"
         />
-    <ListView
-        android:background="@color/white"
-        android:id="@+id/lv_package"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"></ListView>
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+            <com.recovery.scene.widget.MyListView
+                android:background="@color/white"
+                android:id="@+id/lv_package"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"></com.recovery.scene.widget.MyListView>
+            <Button
+                android:layout_width="120dp"
+                android:layout_height="50dp"
+                android:text="保存"
+                android:background="@color/white"
+                android:layout_marginTop="40dp"
+                android:layout_gravity="center"
+                android:id="@+id/btn_save"
+                />
+        </LinearLayout>
 
+
+    </ScrollView>
 
 </LinearLayout>

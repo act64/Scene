@@ -1,5 +1,7 @@
 package com.recovery.netwrok.model;
 
+import com.google.gson.annotations.Expose;
+
 /**
  * Created by tom on 2017/4/22.
  */
@@ -16,9 +18,20 @@ public class TagInfo {
 
     private String id;
     private String createdAt;
-    private String state;
+    private int state;
     private String vendor;
     private String product;
+
+    public String getCodeID() {
+        return codeID;
+    }
+
+    public void setCodeID(String codeID) {
+        this.codeID = codeID;
+    }
+
+    @Expose(serialize = false,deserialize = false)
+    private String codeID;
 
     public String getId() {
         return id;
@@ -36,11 +49,11 @@ public class TagInfo {
         this.createdAt = createdAt;
     }
 
-    public String getState() {
+    public int getState() {
         return state;
     }
 
-    public void setState(String state) {
+    public void setState(int state) {
         this.state = state;
     }
 
@@ -58,5 +71,12 @@ public class TagInfo {
 
     public void setProduct(String product) {
         this.product = product;
+    }
+
+    public String getStateStr(){
+        if (state==0) return "正常";
+        if (state==1) return "已销码";
+        return "";
+
     }
 }

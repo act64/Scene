@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -21,7 +22,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="王小毛"
+            android:id="@+id/tv_name"
+            tools:text="王小毛"
             android:textSize="18dp"
             android:layout_marginLeft="55dp"
             android:layout_centerVertical="true"
@@ -44,7 +46,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="男"
+            tools:text="男"
+            android:id="@+id/tv_sex"
             android:textSize="18dp"
             android:layout_marginLeft="55dp"
             android:layout_centerVertical="true"
@@ -67,7 +70,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="2017-2-13"
+            android:id="@+id/tv_register_time"
+            tools:text="2017-2-13"
             android:textSize="18dp"
             android:layout_marginLeft="100dp"
             android:layout_centerVertical="true"
@@ -90,28 +94,27 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="浙江省临安市天目山"
+            tools:text="浙江省临安市天目山"
             android:textSize="18dp"
             android:layout_marginLeft="55dp"
             android:layout_centerVertical="true"
             android:textColor="#88333333"
+            android:id="@+id/tv_postion"
             />
     </RelativeLayout>
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginLeft="10dp"
-        >
+
         <TextView
+            android:id="@+id/tv_warn"
+            android:layout_marginLeft="12dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="注意：注册地址与当前地址有过大的距离，请注意辨别真伪"
+            android:visibility="gone"
             android:textColor="@color/app.red"
             android:textSize="18dp"
             android:layout_centerVertical="true"
             android:layout_alignParentStart="true" />
 
-    </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -128,11 +131,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="鸡蛋、笋干"
+            tools:text="鸡蛋、笋干"
             android:textSize="18dp"
             android:layout_marginLeft="55dp"
             android:layout_centerVertical="true"
             android:textColor="#88333333"
+            android:id="@+id/tv_sell_item"
             />
     </RelativeLayout>
     <RelativeLayout
@@ -151,17 +155,18 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="2017-5-21"
+            tools:text="2017-5-21"
             android:textSize="18dp"
             android:layout_marginLeft="100dp"
             android:layout_centerVertical="true"
             android:textColor="#88333333"
+            android:id="@+id/tv_last_trade"
             />
     </RelativeLayout>
 <TextView
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="照片"
+    android:text="照片信息"
     android:textColor="@color/text.333333"
     android:textSize="20dp"
     android:layout_marginLeft="20dp"
@@ -172,10 +177,13 @@
         android:background="#e6e6e6"
         />
     <LinearLayout
+        android:layout_marginTop="3dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/ll_pics"
         android:orientation="vertical"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         ></LinearLayout>
 </LinearLayout>
 </ScrollView>
