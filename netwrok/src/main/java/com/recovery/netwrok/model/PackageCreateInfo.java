@@ -15,6 +15,15 @@ public class PackageCreateInfo {
 
     private String packageCode;
     private List<String> productList;
+    private String classGroup;
+
+    public String getClassGroup() {
+        return classGroup;
+    }
+
+    public void setClassGroup(String classGroup) {
+        this.classGroup = classGroup;
+    }
 
     public String getPackageCode() {
         return packageCode;

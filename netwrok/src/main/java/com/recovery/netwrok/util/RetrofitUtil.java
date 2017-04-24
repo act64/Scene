@@ -28,7 +28,7 @@ import rx.schedulers.Schedulers;
  */
 
 public class RetrofitUtil {
-    private static final String baseUtl="http://192.168.0.19:8648/";
+    private static final String baseUtl="http://dev.chnagiot.com:8648/";
     private static final long DEFAULT_TIMEOUT = 20;
     private static Retrofit retrofit;
 

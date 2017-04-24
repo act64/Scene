@@ -29,12 +29,14 @@ public class LoginActivity extends BaseTopActivity {
     @BindView(R.id.tv_pwd)
     EditText tvPwd;
     private Present present;
+    private View tvpower;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+       tvpower= findViewById(R.id.tv_power);
         findViewById(R.id.tv_login).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -45,6 +47,7 @@ public class LoginActivity extends BaseTopActivity {
                 }
             }
         });
+
     }
 
     private boolean checkInput(EditText et, String type) {
@@ -75,7 +78,11 @@ public class LoginActivity extends BaseTopActivity {
                     super.onNext(userInfo);
                     if (!isAvaiable() || userInfo == null) return;
                     UserInfoUtil.putUserInfo(userInfo);
-                    getRefObj().startActivity(new Intent(getRefObj(), SelectFuncActivity.class));
+                    if (getRefObj().tvpower==null) {
+                        getRefObj().startActivity(new Intent(getRefObj(), SelectFuncActivity.class));
+                    }else {
+                        getRefObj().startActivity(new Intent(getRefObj(), PackageLandActivity.class));
+                    }
                     getRefObj().finish();
                     getRefObj().hideLoading();
                 }

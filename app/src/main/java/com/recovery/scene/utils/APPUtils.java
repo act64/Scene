@@ -6,12 +6,16 @@ package com.recovery.scene.utils;
 
 public class APPUtils {
     public static String getTagCode(String code){
-        if (code==null||!code.toLowerCase().contains("http://qs0.me/v/")){
+        if (code==null||!code.toLowerCase().trim().contains("http://qs0.me/v/")){
             return null;
         }
         String[] pits = code.split("/");
         if (pits!=null &&pits.length>0) {
-            return pits[pits.length - 1];
+            String pit = pits[pits.length - 1];
+            if (pit.length()==8) {
+                return pit;
+            }
+            return null;
         }
         return null;
     }

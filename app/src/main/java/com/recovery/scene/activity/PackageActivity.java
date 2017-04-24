@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -29,12 +30,10 @@ import com.recovery.netwrok.model.TagInfo;
 import com.recovery.netwrok.model.TagStateInfo;
 import com.recovery.netwrok.subscriber.ApiSubscriber;
 import com.recovery.scene.R;
-import com.recovery.scene.model.ProductItemPOJO;
 import com.recovery.scene.utils.APPUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -47,7 +46,7 @@ import hotjavi.lei.com.base_module.present.BaseObjectPresent;
  * Created by tom on 2017/4/20.
  */
 
-public class PackageActivity extends BaseSetMainActivity {
+public class PackageActivity extends BaseSetMainActivity implements AdapterView.OnItemLongClickListener {
 
     ListView lv;
     View rlCode;
@@ -63,6 +62,7 @@ public class PackageActivity extends BaseSetMainActivity {
     private static final String SCN_CUST_ACTION_SCODE = "com.android.server.scannerservice.broadcast";
     IntentFilter mSCTestIntentfilter = new IntentFilter(SCN_CUST_ACTION_SCODE);
     private Present present;
+    private AlertDialog alter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -93,6 +93,7 @@ public class PackageActivity extends BaseSetMainActivity {
         lv.setAdapter(productAdapter);
         productAdapter.notifyDataSetChanged();
          present=new Present(this);
+        lv.setOnItemLongClickListener(this);
 
     }
 
@@ -228,6 +229,26 @@ private int productCounts=0;
         tvCounts.setText(productCounts+"");
     }
 
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+        if (productAdapter.getCount()>0&&position>0&&productAdapter.getCount()>position) {
+          alter=  new AlertDialog.Builder(this).setTitle("是否删除此条记录?").setNegativeButton("否", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    alter.dismiss();
+                }
+            }).setPositiveButton("删除", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    productAdapter.remove(productAdapter.getItem(position));
+                    productCounts--;
+                    alter.dismiss();
+
+                }
+            }).show();
+        }
+        return false;
+    }
 
     private static class Present extends BaseObjectPresent<PackageActivity> {
         public Present(PackageActivity packageActivity) {

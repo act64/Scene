@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_page"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:background="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="0,1"
+            android:layout_marginLeft="40dp"
+            >
+
+            <TableRow>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:layout_column="0">
+
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="班组"
+                       android:textSize="20dp"
+                       android:textColor="@color/text.333333"
+                       android:layout_centerVertical="true"
+                       />
+                    <EditText
+                        android:layout_width="wrap_content"
+                        android:minWidth="150dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="18dp"
+                        android:textColor="#999999"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="50dp"
+                        android:id="@+id/et_class"
+                        />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:layout_column="1">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="责任人"
+                        android:textSize="20dp"
+                        android:textColor="@color/text.333333"
+                        android:layout_centerVertical="true"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:minWidth="150dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="18dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="80dp"
+                        android:id="@+id/et_person"
+                        android:textColor="#999999"
+                        />
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="200dp"
+                    android:layout_height="50dp" />
+            </TableRow>
+
+            <TableRow>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:layout_column="0"
+                    android:id="@+id/rl_selectData"
+                    >
+
+                    <TextView
+                        android:textSize="20dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="日期"
+                        android:textColor="@color/text.333333"
+                        android:layout_centerVertical="true"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:minWidth="150dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="18dp"
+                        android:textColor="#999999"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="50dp"
+                        android:id="@+id/et_date"
+                        />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:id="@+id/rl_scan"
+                    android:layout_column="1">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="打包码"
+                        android:textSize="20dp"
+
+                        android:textColor="@color/text.333333"
+                        android:layout_centerVertical="true"
+                        />
+                    <TextView
+                        android:text="点击扫描打包码"
+                        android:layout_width="wrap_content"
+                        android:minWidth="150dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="18dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="80dp"
+                        android:id="@+id/et_package"
+                        android:textColor="#999999"
+                        />
+                </RelativeLayout>
+            </TableRow>
+
+        </TableLayout>
+
+        <Button
+            android:id="@+id/btn_save"
+            android:textColor="@color/white"
+            android:layout_width="120dp"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="30dp"
+            android:background="@color/app.blue"
+            android:text="完成" />
+        <EditText
+            android:layout_width="1px"
+            android:layout_height="1px"
+            android:id="@+id/et_scanner"
+            android:focusable="true"
+            />
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="1dp"
+        android:background="@color/white">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:text="数量"
+            android:textColor="@color/text.333333"
+            android:textSize="18dp" />
+
+        <TextView
+            android:id="@+id/tv_counts"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="55dp"
+            android:layout_toEndOf="@+id/textView"
+            android:text="0"
+            android:textColor="#88333333"
+            android:textSize="18dp" />
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:text="产品列表"
+        android:textColor="@color/text.333333"
+        android:textSize="20dp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.recovery.scene.widget.MyListView
+                android:id="@+id/lv_package"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"></com.recovery.scene.widget.MyListView>
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+</LinearLayout>
