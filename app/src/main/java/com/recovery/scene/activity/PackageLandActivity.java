@@ -138,16 +138,19 @@ public class PackageLandActivity extends BaseSetMainActivity implements View.OnL
         etScanner.requestFocus();
     }
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getCustomToolBar().setBackVisble(false, null);
         getCustomToolBar().setTitle("打包");
-        getCustomToolBar().setRightIcon(R.mipmap.ic_logout);
-        getCustomToolBar().setRightClick(new View.OnClickListener() {
+        getCustomToolBar().setLeftView(R.mipmap.ic_logout);
+        getCustomToolBar().setBackVisble(true,null);
+        getCustomToolBar().setRightText("源品出库");
+        getCustomToolBar().setLeftClick(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               alter = new AlertDialog.Builder(PackageLandActivity.this).setTitle("是否退出？").setPositiveButton("退出", new DialogInterface.OnClickListener() {
+                alter = new AlertDialog.Builder(PackageLandActivity.this).setTitle("是否退出？").setPositiveButton("退出", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         UserInfoUtil.putUserInfo(null);
@@ -156,6 +159,13 @@ public class PackageLandActivity extends BaseSetMainActivity implements View.OnL
                         finish();
                     }
                 }).setNegativeButton("否", null).show();
+
+            }
+        });
+        getCustomToolBar().setRightClick(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(PackageLandActivity.this,ActivityCollectOutLand.class));
             }
         });
         setMainContet(R.layout.activity_package_land);

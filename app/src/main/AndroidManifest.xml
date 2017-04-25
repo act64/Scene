@@ -86,6 +86,10 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden"
             />
+        <activity android:name=".activity.ActivityCollectOutLand"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"
+            />
         <!--百度定位-->
         <service
             android:name="com.baidu.location.f"

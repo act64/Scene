@@ -6,4 +6,12 @@
         <item >公斤</item>
         <item >升</item>
     </string-array>
+
+    <string-array name="products">
+        <item >西红柿</item>
+        <item >土鸡蛋</item>
+        <item >苹果</item>
+        <item >平菇</item>
+        <item >香菇</item>
+    </string-array>
 </resources>
