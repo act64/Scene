@@ -214,7 +214,7 @@ private int productCounts=0;
     }
 
     private void useTagStateInfo(TagStateInfo tagStateInfo) {
-        if (tagStateInfo.getState()!=1){
+        if (tagStateInfo.getState()!=0){
             Toast.makeText(this,"扫描的打包码有误",Toast.LENGTH_SHORT).show();
             return;
         }
