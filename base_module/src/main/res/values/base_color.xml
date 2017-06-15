@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#ffffffff</color>
+    <color name="app.blue">#4991fd</color>
+    <color name="app.red">#fc6b53</color>
+    <color name="text_green">#00C705</color>
+    <color name="text.333333">#333333</color>
+    <color name="bg_page">#e6e6e6</color>
+    <color name="light_88333333">#88333333</color>
+</resources>

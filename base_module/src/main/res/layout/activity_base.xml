@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <hotjavi.lei.com.base_module.widget.CustomToolBar
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title.hight"
+        android:background="@color/app.blue"
+        app:custom_title="标题"
+        app:contentInsetStart="0dp"
+        app:right_text=""
+        android:id="@+id/custom_titletoolbar"
+        />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/content_main"
+        android:focusable="true"
+        android:background="@color/white"
+        ></FrameLayout>
+</LinearLayout>

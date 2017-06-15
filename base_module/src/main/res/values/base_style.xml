@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CustomToolBar">
+        <attr name="custom_title" format="string"></attr>
+        <attr name="right_text" format="string"></attr>
+    </declare-styleable>
+</resources>

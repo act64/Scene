@@ -1,3 +1,1 @@
-include ':app', ':commui', ':netwrok'
-include ':base_module'
-project(':base_module').projectDir = new File(settingsDir, '../../HotJavi/base_module')
+include ':app', ':commui', ':netwrok', ':base_module'

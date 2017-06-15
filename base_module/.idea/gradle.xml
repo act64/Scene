@@ -3,15 +3,14 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
-        <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
+            <option value="$PROJECT_DIR$/.." />
+            <option value="$PROJECT_DIR$/../application" />
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/base_module" />
-            <option value="$PROJECT_DIR$/commui" />
-            <option value="$PROJECT_DIR$/netwrok" />
+            <option value="$PROJECT_DIR$/../netbase" />
+            <option value="$USER_HOME$/leigits/DroidPlugin/project/Libraries/DroidPlugin" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
